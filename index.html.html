@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="zh-TW"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同齊咖吡 TOGETHER COFFEE PROJECT</title>
+    <style>
+        /* --- CSS 全域設置 --- */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: "Noto Sans TC", "Inter", sans-serif;
+            border-radius: 0 !important;
+        }
+
+        :root {
+            --brand-blue: #002C6B;
+            --text-main: #1A1A1A;
+            --light-bg: #F9F9F9;
+            --border-color: #E8E8E8;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { background-color: #ffffff; color: var(--text-main); line-height: 1.8; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+
+        /* --- 導覽列優化 --- */
+        .navbar {
+            position: fixed; top: 0; width: 100%;
+            padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 2000; border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 3px; }
+
+        /* 電腦版選單 */
+        .nav-links { display: flex; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-main);
+            margin-left: 35px; font-size: 0.8rem; letter-spacing: 2px;
+        }
+        .nav-links a span { color: var(--brand-blue); margin-right: 5px; font-weight: 700; }
+
+        /* 手機版漢堡按鈕 (預設隱藏) */
+        .menu-toggle { display: none; cursor: pointer; font-size: 0.8rem; letter-spacing: 2px; font-weight: 700; }
+
+        /* --- 首屏輪播 --- */
+        .hero { height: 100vh; position: relative; overflow: hidden; }
+        .hero-slider { width: 100%; height: 100%; position: relative; }
+        .hero-slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
+        .hero-slide.active { opacity: 1; }
+        .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3); padding: 0 20px; }
+        .main-title { font-size: 3rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 8px; line-height: 1.3; color: #fff; }
+        .sub-title { font-style: italic; font-family: serif; color: #fff; font-size: 1.2rem; margin-bottom: 10px; }
+        .brand-slogan { font-size: 0.9rem; letter-spacing: 4px; color: rgba(255,255,255,0.9); }
+
+        /* --- 通用章節 --- */
+        .section { padding: 120px 0; }
+        .bg-gray { background-color: var(--light-bg); }
+        .sec-num { color: var(--brand-blue); font-size: 3.5rem; font-weight: 200; line-height: 1; margin-bottom: 10px; }
+        .sec-title { font-size: 1.1rem; letter-spacing: 6px; margin-bottom: 60px; font-weight: 600; }
+
+        /* --- MENU 網格 --- */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 60px; }
+        .menu-cat h4 { color: var(--brand-blue); border-bottom: 2px solid var(--brand-blue); padding-bottom: 12px; margin-bottom: 25px; }
+        .menu-cat ul { list-style: none; }
+        .menu-cat li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+
+        /* --- GALLERY 圖片展示區 --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
+        .gallery-item { position: relative; overflow: hidden; aspect-ratio: 1/1; background-color: var(--light-bg); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, filter 0.3s ease; filter: brightness(0.95); }
+        .gallery-item:hover img { transform: scale(1.08); filter: brightness(1); }
+        .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; font-size: 0.85rem; color: #fff; text-align: left; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); opacity: 0; transition: opacity 0.3s ease; }
+        .gallery-item:hover .gallery-caption { opacity: 1; }
+
+        /* --- STORES --- */
+        .stores-flex { display: flex; gap: 60px; border-top: 1px solid var(--border-color); padding-top: 40px; }
+        .store-card { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid #eee; width: 100%; }
+        .map-btn { text-decoration: none; border: 1px solid var(--brand-blue); color: var(--brand-blue); padding: 10px 20px; font-size: 0.75rem; font-weight: 700; }
+
+        /* --- Footer --- */
+        .footer { padding: 80px 0; text-align: center; border-top: 1px solid var(--border-color); }
+        .social { font-size: 0.75rem; letter-spacing: 5px; margin-bottom: 20px; }
+        .copy { font-size: 0.7rem; color: #999; }
+
+        /* --- 手機版專屬樣式 (Mobile Optimized) --- */
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 25px; }
+            .nav-links {
+                display: none; /* 隱藏原本橫向選單 */
+                position: fixed; top: 0; right: 0; width: 100%; height: 100vh;
+                background: #fff; flex-direction: column; align-items: center; justify-content: center;
+                z-index: 1900;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { margin: 20px 0; font-size: 1.2rem; }
+            
+            .menu-toggle { display: block; z-index: 2100; }
+            
+            .main-title { font-size: 1.8rem; letter-spacing: 4px; padding: 0 10px; }
+            .sub-title { font-size: 1rem; }
+            
+            .section { padding: 80px 0; }
+            .sec-num { font-size: 2.8rem; }
+            
+            .stores-flex { flex-direction: column; gap: 30px; }
+            .store-card { flex-direction: column; gap: 20px; }
+            .map-btn { align-self: flex-start; }
+            
+            .gallery-grid { grid-template-columns: 1fr; gap: 0; }
+            .gallery-caption { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">同齊咖吡 TOGETHER</div>
+        <div class="menu-toggle" id="mobile-menu-btn">MENU</div>
+        <div class="nav-links" id="nav-menu">
+            <a href="#about" onclick="toggleMenu()"><span>01</span> ABOUT</a>
+            <a href="#menu" onclick="toggleMenu()"><span>02</span> MENU</a>
+            <a href="#gallery" onclick="toggleMenu()"><span>03</span> GALLERY</a>
+            <a href="story.html"><span>04</span> STORY</a>
+            <a href="#stores" onclick="toggleMenu()"><span>05</span> STORES</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1600&q=80" alt="咖啡廳空間">
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=1600&q=80" alt="手沖咖啡">
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1600&q=80" alt="拿鐵拉花">
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1600&q=80" alt="咖啡廳角落">
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1600&q=80" alt="咖啡與甜點">
+            </div>
+        </div>
+        <div class="hero-content">
+            <p class="sub-title">Coffee is better when we are together</p>
+            <h1 class="main-title">聚在一起<br>就是最好的風味</h1>
+            <p class="brand-slogan">同齊咖吡｜在地烘焙與社群共享計畫</p>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="sec-num">01</h2>
+            <h3 class="sec-title">ABOUT PROJECT</h3>
+            <p>「同齊」源於閩南語中的「在一起」。我們致力於將專業的自家烘焙豆,透過溫潤的空間與分享,創造一個讓每個人都能放鬆、對話並找到歸屬感的社群角落。</p>
+        </div>
+    </section>
+
+    <section id="menu" class="section bg-gray">
+        <div class="container">
+            <h2 class="sec-num">02</h2>
+            <h3 class="sec-title">MENU</h3>
+            <div class="menu-grid">
+                <div class="menu-cat">
+                    <h4># Hand Drip</h4>
+                    <ul>
+                        <li>同齊配方豆 <span>$120</span></li>
+                        <li>耶加雪菲 <span>$150</span></li>
+                    </ul>
+                </div>
+                <div class="menu-cat">
+                    <h4># Latte</h4>
+                    <ul>
+                        <li>同齊拿鐵 <span>$130</span></li>
+                        <li>燕麥奶拿鐵 <span>$145</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section">
+        <div class="container">
+            <h2 class="sec-num">03</h2>
+            <h3 class="sec-title">GALLERY</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80" alt="咖啡廳空間">
+                    <div class="gallery-caption">溫暖的空間氛圍</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80" alt="手沖咖啡">
+                    <div class="gallery-caption">專業手沖技藝</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80" alt="咖啡豆烘焙">
+                    <div class="gallery-caption">自家烘焙咖啡豆</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80" alt="拿鐵拉花">
+                    <div class="gallery-caption">精緻拿鐵拉花</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80" alt="咖啡廳角落">
+                    <div class="gallery-caption">舒適的閱讀角落</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&q=80" alt="咖啡與甜點">
+                    <div class="gallery-caption">咖啡與甜點搭配</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stores" class="section">
+        <div class="container">
+            <h2 class="sec-num">04</h2>
+            <h3 class="sec-title">STORES</h3>
+            <div class="stores-flex">
+                <div style="font-weight: 700; color: var(--brand-blue);">TAICHUNG</div>
+                <div style="width: 100%;">
+                    <div class="store-card">
+                        <div>
+                            <h4>同齊咖吡｜台中總店</h4>
+                            <p style="font-size: 0.85rem; color: #666; margin-top: 8px;">台中市北屯區（詳細地址）</p>
+                            <p style="font-size: 0.85rem; color: #666;">TEL / 04-1234-5678</p>
+                        </div>
+                        <a href="#" class="map-btn">MAPS ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="social">FB | IG | LINE</div>
+        <div class="copy">© 2026 TOGETHER COFFEE PROJECT.</div>
+    </footer>
+
+    <script>
+        // 手機版選單開關邏輯
+        const menuBtn = document.getElementById("mobile-menu-btn");
+        const navMenu = document.getElementById("nav-menu");
+
+        function toggleMenu() {
+            if (window.innerWidth <= 768) {
+                navMenu.classList.toggle("active");
+                menuBtn.innerText = navMenu.classList.contains("active") ? "CLOSE" : "MENU";
+            }
+        }
+
+        menuBtn.addEventListener("click", toggleMenu);
+
+        // 首屏輪播功能
+        const slides = document.querySelectorAll('.hero-slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 4000); // 每4秒切換一次
+    </script>
+
+</body></html>
